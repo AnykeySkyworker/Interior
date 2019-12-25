@@ -6,6 +6,9 @@ const cleanCSS = require('gulp-clean-css');
 const uglify = require('gulp-uglify');
 const browserSync = require('browser-sync').create();
 const rigger = require('gulp-rigger');
+const sass = require('gulp-sass');
+const sourcemaps = require('gulp-sourcemaps');
+
 
 
 // Порядок подключения css файлов
@@ -37,6 +40,15 @@ function styles() {
   .pipe(gulp.dest('./dist/css'))
   //Обновляем страницу при изменениях в CSS
   .pipe(browserSync.stream());
+}
+
+//Таск на компиляцию SCSS
+function sassCompile() {
+  return gulp.src('./src/scss/**.*scss')
+  .pipe(sourcemaps.init())
+  .pipe(sass().on('error', sass.logError))
+  .pipe(sourcemaps.write('./'))
+  .pipe(gulp.dest('./src/css/'))
 }
 
 //Таск на скрипты JS
@@ -75,6 +87,8 @@ function watch() {
   //При изменении HTML запускать синхронизацию
   gulp.watch('./src/**/*.html', HTML)
   // gulp.watch("./src/*.html").on('change', browserSync.reload);
+  //Следить за SCSS файлами
+  gulp.watch('./src/scss/**/*.scss', sassCompile)
 }
 
 
@@ -82,10 +96,13 @@ function watch() {
 gulp.task('styles', styles);
 //Таск вызывающий ф-ю scripts
 gulp.task('scripts', scripts);
+//Таск компилирующий SCSS
+gulp.task('sassCompile', sassCompile);
+//Таск на трансляцию HTML в папку dist
 gulp.task('HTML', HTML);
 //Таск для слежения за файлами и перезагрузки страницы
 gulp.task('watch', watch);
 //Таск для одновременного запуска styles и scripts
-gulp.task('build', gulp.series(HTML, gulp.parallel(styles, scripts)));
+gulp.task('build', gulp.series(HTML, sassCompile, gulp.parallel(styles, scripts)));
 //Таск последовательно запускает таски build и  watch
 gulp.task('default', gulp.series('build', 'watch'));

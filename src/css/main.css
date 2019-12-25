@@ -1,12 +1,12 @@
-a {
-  color: rgb(21, 255, 0);
-}
 .container {
-  font-style: italic;
-}
-.row {
-  display: flex;
-} 
-h1 {
-  color: orange;
-}
+  font-style: italic; }
+  .container .row {
+    display: flex; }
+
+body h1 {
+  color: red; }
+
+body a {
+  color: green; }
+
+/*# sourceMappingURL=main.css.map */
